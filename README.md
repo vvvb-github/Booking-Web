@@ -23,3 +23,12 @@
 
 ### 日志记录
 - **2020.11.6** 创建项目
+- **2020.12.2** 主页布局设计，并添加全局色卡对象，对于色卡的使用参考如下代码
+```vue
+<... :style="this.colorCard.color1" ...><!-- 层级1颜色 -->
+<... :style="this.colorCard.color2" ...><!-- 层级2颜色 -->
+<... :style="this.colorCard.color3" ...><!-- 层级3颜色 -->
+<... :style="this.colorCard.color4" ...><!-- 层级4颜色 -->
+<... :style="this.colorCard.color5" ...><!-- 层级5颜色 -->
+<... :style="this.colorCard.textColor" ...><!-- 字体高亮颜色 -->
+```
