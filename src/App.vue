@@ -1,5 +1,5 @@
 <template>
-    <div id="app" class="app">
+    <div id="app" :style="{backgroundColor: this.colorCard.color5}">
         <div id="header" :style="{backgroundColor: this.colorCard.color1}">
             <div id="header-main">
                 <div id="header-body">
@@ -7,19 +7,19 @@
                 </div>
                 <el-menu
                         id="nav"
-                        :default-active="'1'"
+                        :default-active="'/'"
                         class="el-menu-demo"
                         mode="horizontal"
                         @select="handleSelect"
                         :background-color="this.colorCard.color1"
                         :text-color="this.colorCard.color5"
                         :active-text-color="this.colorCard.textColor">
-                    <el-menu-item index="1" class="el-menu-item">首页</el-menu-item>
-                    <el-menu-item index="2" class="el-menu-item">待扩展</el-menu-item>
+                    <el-menu-item index="/" class="el-menu-item">首页</el-menu-item>
+                    <el-menu-item index="todo" class="el-menu-item">待扩展</el-menu-item>
                 </el-menu>
             </div>
             <div id="header-user">
-                <el-dropdown style="margin-right: 10px">
+                <el-dropdown v-if="this.$store.state.user.token" style="margin-right: 10px">
                     <span class="el-dropdown-link" :style="{color: this.colorCard.textColor}">
                         {{this.$store.state.user.nickName}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
@@ -27,10 +27,12 @@
                         <el-dropdown-item>个人中心</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
-                <el-avatar :size="80" fit="fill" :src="this.$store.state.user.icon"></el-avatar>
+                <el-button type="text" v-else :style="{color: this.colorCard.textColor}"
+                id="login-btn" @click="login">登录/注册</el-button>
+                <el-avatar :size="80" fit="fill" :src="iconSrc"></el-avatar>
             </div>
         </div>
-        <router-view class="page"/>
+        <router-view/>
         <el-backtop>
             <i class="el-icon-top"></i>
         </el-backtop>
@@ -43,21 +45,32 @@
         name: 'App',
         methods: {
             handleSelect(index) {
-                console.log(index)
+                this.$router.push(index)
+            },
+            login() {
+                this.$router.push('/login')
             }
         },
         computed: {
-            pageHeight() {
-                let height = document.querySelector('#app').clientHeight;
-                let headHeight = document.querySelector('header').clientHeight;
-                return height - headHeight;
-            }
-        }
+            iconSrc() {
+                if(this.$store.state.user.token) return this.$store.state.user.icon;
+                else return 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
+            },
+        },
     }
 </script>
 
 <style>
+    html {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
     body {
+        width: 100%;
+        height: 100%;
+        padding: 0;
         margin: 0;
     }
     #app {
@@ -101,7 +114,8 @@
         font-size: 20px;
     }
 
-    .page {
-        width: 100%;
+    #login-btn {
+        font-size: 20px;
+        margin-right: 10px;
     }
 </style>

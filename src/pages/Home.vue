@@ -25,11 +25,11 @@
             <div id="top-div" :style="{backgroundColor: this.colorCard.color4}">
                 <div id="search-div">
                     <div class="tab-div">
-                        <el-tag type="info" class="tag-info">搜索酒店</el-tag>
+                        <span type="info" class="tag-info">搜索酒店</span>
                         <el-input v-model="searchContext" placeholder="请输入搜索内容..." style="width: 200px"></el-input>
                     </div>
                     <div class="tab-div">
-                        <el-tag type="info" class="tag-info">入住时间</el-tag>
+                        <span type="info" class="tag-info">入住时间</span>
                         <el-date-picker
                             v-model="startTime"
                             type="datetime"
@@ -39,7 +39,7 @@
                         </el-date-picker>
                     </div>
                     <div class="tab-div">
-                        <el-tag type="info" class="tag-info">退房时间</el-tag>
+                        <span type="info" class="tag-info">退房时间</span>
                         <el-date-picker
                             v-model="endTime"
                             type="datetime"
@@ -49,11 +49,10 @@
                         </el-date-picker>
                     </div>
                     <div class="tab-div">
-                        <el-tag type="info" class="tag-info">选择人数</el-tag>
+                        <span type="info" class="tag-info">选择人数</span>
                         <el-input-number :min="1" v-model="people"></el-input-number>
                     </div>
-                    <el-button type="primary" icon="el-icon-search"
-                               style="margin-left: 20px" @click="onSearch">搜索</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="onSearch">搜索</el-button>
                 </div>
                 <div class="select-div" v-for="(data,i) in selector" :key="data.title">
                     <span class="select-title">{{data.title}}</span>
@@ -65,6 +64,9 @@
             <div id="body-div" :style="{backgroundColor: this.colorCard.color5}">
                 <hotel-card v-for="(card,i) in hotels" :key="i" v-bind="card"
                 class="hotel-card"></hotel-card>
+            </div>
+            <div id="bottom-div" :style="{backgroundColor: this.colorCard.color1}">
+                <img src="../assets/logo.png" id="bottom-logo">
             </div>
         </div>
     </div>
@@ -231,7 +233,7 @@
 
     #search-div {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         justify-content: center;
         padding: 20px;
     }
@@ -241,6 +243,8 @@
     }
     .tag-info {
         font-size: large;
+        padding: 5px;
+        font-weight: bold;
     }
 
     .select-div {
@@ -271,10 +275,23 @@
         justify-content: center;
         padding-left: 10%;
         padding-right: 10%;
+        padding-bottom: 50px;
     }
     .hotel-card {
         width: 300px;
         margin: 20px;
+    }
+
+    #bottom-div {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 20px 10%;
+    }
+    #bottom-logo {
+        width: 200px;
+        height: 120px;
+        object-fit: cover;
     }
 
 </style>
