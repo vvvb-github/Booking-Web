@@ -32,3 +32,11 @@
 <... :style="this.colorCard.color5" ...><!-- 层级5颜色 -->
 <... :style="this.colorCard.textColor" ...><!-- 字体高亮颜色 -->
 ```
+- **2020.12.3** 登录与注册页面完成，并对主页布局进行微调。注册页面用到了验证码插件，请安装如下依赖：
+```shell script
+yarn add vue-puzzle-vcode
+```
+也可以重新PULL项目后执行
+```shell script
+yarn install
+```
