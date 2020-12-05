@@ -11,6 +11,9 @@
                 <el-form-item label="确认密码" prop="repeat">
                     <el-input v-model="form.repeat" show-password></el-input>
                 </el-form-item>
+                <el-form-item label="昵称" prop="nickName">
+                    <el-input v-model="form.nickName"></el-input>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="success" @click="register">注册</el-button>
                     <el-button @click="reset">重置</el-button>
@@ -48,6 +51,7 @@ export default {
                 email: '',
                 password: '',
                 repeat: '',
+                nickName: '',
             },
             rules: {
                 email: [
@@ -67,14 +71,17 @@ export default {
                         if(value !== this.form.password) callback(new Error('密码不一致'));
                         callback();
                         }, trigger: 'blur'}
+                ],
+                nickName: [
+                    {required: true, message: '昵称不能为空', trigger: 'blur'}
                 ]
             },
             verifyCodeShow: false,
         }
     },
     methods: {
-        success(msg) {
-            console.log(msg);
+        success() {
+            // console.log(msg);
             this.verifyCodeShow = false;
             // submit
         },
@@ -85,11 +92,11 @@ export default {
             this.$refs['register-form'].validate(valid=>{
                 console.log(valid);
                 if(valid) this.verifyCodeShow = true;
-                else this.$message({
-                    showClose: true,
-                    message: '请输入正确的注册信息！',
-                    type: 'error'
-                });
+                // else this.$message({
+                //     showClose: true,
+                //     message: '请输入正确的注册信息！',
+                //     type: 'error'
+                // });
             })
         },
         login() {

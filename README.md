@@ -40,3 +40,4 @@ yarn add vue-puzzle-vcode
 ```shell script
 yarn install
 ```
+- **2020.12.5** 添加找回密码、个人主页，个人主页只完成了一半；对于注册、登录布局稍作调整。

@@ -19,12 +19,15 @@
                 </el-menu>
             </div>
             <div id="header-user">
-                <el-dropdown v-if="this.$store.state.user.token" style="margin-right: 10px">
+                <el-dropdown v-if="this.$store.state.user.token" style="margin-right: 10px"
+                    @command="avatarClick">
                     <span class="el-dropdown-link" :style="{color: this.colorCard.textColor}">
                         {{this.$store.state.user.nickName}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>个人中心</el-dropdown-item>
+                        <el-dropdown-item v-for="(path,index) in avatarPaths" :key="index" :command="path">
+                            {{avatarLabels[index]}}
+                        </el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
                 <el-button type="text" v-else :style="{color: this.colorCard.textColor}"
@@ -43,12 +46,22 @@
 
     export default {
         name: 'App',
+        data() {
+            return {
+                avatarLabels: ['个人中心'],
+                avatarPaths: ['/profile'],
+            }
+        },
         methods: {
             handleSelect(index) {
                 this.$router.push(index)
             },
             login() {
                 this.$router.push('/login')
+            },
+            avatarClick(path) {
+                console.log(path);
+                this.$router.push(path)
             }
         },
         computed: {

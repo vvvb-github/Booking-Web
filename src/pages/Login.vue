@@ -12,9 +12,13 @@
                     <el-button type="success" @click="submit">登录</el-button>
                     <el-button @click="reset">重置</el-button>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item style="margin-bottom: 0">
                     <el-button type="text" disabled>还没有帐号？</el-button>
                     <el-button type="text" @click="register">注册帐号</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="text" disabled>忘记密码？</el-button>
+                    <el-button type="text" @click="forget">点击重设</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -32,7 +36,8 @@ export default {
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: 0,
-                height: '100%'
+                height: '100%',
+                paddingTop: '50px'
             },
             form: {
                 email: '',
@@ -73,6 +78,9 @@ export default {
         },
         register() {
             this.$router.push('/register')
+        },
+        forget() {
+            this.$router.push('/forget')
         }
     }
 }
@@ -87,7 +95,6 @@ export default {
 
     #login-form {
         width: 600px;
-        height: 300px;
-        margin-top: 150px;
+        margin-top: 100px;
     }
 </style>
