@@ -1,8 +1,8 @@
 <template>
     <div>
-        <el-button id="dock-btn" icon="el-icon-caret-right"
-                   :style="{backgroundColor: this.colorCard.color1, color: this.colorCard.textColor}"
-                   @click="dockVisible=true"></el-button>
+<!--        <el-button id="dock-btn" icon="el-icon-caret-right"-->
+<!--                   :style="{backgroundColor: this.colorCard.color1, color: this.colorCard.textColor}"-->
+<!--                   @click="dockVisible=true"></el-button>-->
         <el-drawer
                 direction="ltr"
                 :visible.sync="dockVisible"
@@ -74,6 +74,7 @@
 
 <script>
     import HotelCard from "@/components/HotelCard";
+    import axios from 'axios'
 
     export default {
         name: "Home",
@@ -82,8 +83,8 @@
             return {
                 dockVisible: false,
                 searchContext: '',
-                startTime: '',
-                endTime: '',
+                startTime: new Date(),
+                endTime: new Date(),
                 people: 1,
                 pickerOptions: {
                     shortcuts: [{
@@ -121,74 +122,15 @@
                 ],
                 hotels: [
                     {
+                        uuid: 0,
                         hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
+                        introduction: '',
+                        location: '',
+                        roomList: '',
+                        pictureUrl: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
+                        minPrice: 1000,
                         stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
-                    },
-                    {
-                        hotelName: '姬哥酒店',
-                        cover: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        price: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024
+                        commentNumber: 1024,
                     },
                 ],
             }
@@ -198,11 +140,36 @@
                 console.log(index)
             },
             onSearch() {
-                console.log(this.searchContext, this.startTime, this.endTime)
+                let data = {
+                    parameter: this.searchContext,
+                    startTime: this.startTime,
+                    endTime: this.endTime,
+                    customerNumber: this.people,
+                    type: this.selector[0].items[this.selector[0].chosen],
+                    location: this.selector[1].items[this.selector[1].chosen],
+                }
+                axios.get(this.SERVER_PATH+'/search',{params:data})
+                .then(res=>{
+                    let data = res.data
+                    if(data.status === 200) {
+                        this.hotels = data.hotelList
+                    }
+                    else {
+                        this.$message.error(data.msg);
+                    }
+                })
+                .catch(err=>{
+                    console.log(err)
+                    this.$message.error('服务器错误！')
+                })
             },
             onSelect(i, j) {
                 this.selector[i].chosen = j
+                this.onSearch()
             }
+        },
+        mounted() {
+            this.onSearch();
         }
     }
 </script>

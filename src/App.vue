@@ -15,7 +15,7 @@
                         :text-color="this.colorCard.color5"
                         :active-text-color="this.colorCard.textColor">
                     <el-menu-item index="/" class="el-menu-item">首页</el-menu-item>
-                    <el-menu-item index="todo" class="el-menu-item">待扩展</el-menu-item>
+                    <el-menu-item index="/my-order" class="el-menu-item">我的订单</el-menu-item>
                 </el-menu>
             </div>
             <div id="header-user">

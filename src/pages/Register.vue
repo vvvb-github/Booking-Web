@@ -14,6 +14,13 @@
                 <el-form-item label="昵称" prop="nickName">
                     <el-input v-model="form.nickName"></el-input>
                 </el-form-item>
+                <el-form-item label="验证码" prop="code">
+                    <el-input v-model="form.code"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="text" @click="verify" :disabled="inCD">发送验证邮件</el-button>
+                    <el-button type="text" disabled v-if="inCD">{{cd}}秒后重新发送</el-button>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="success" @click="register">注册</el-button>
                     <el-button @click="reset">重置</el-button>
@@ -30,6 +37,7 @@
 
 <script>
 import verifyCode from 'vue-puzzle-vcode';
+import axios from 'axios';
 
 export default {
     name: "Register",
@@ -38,6 +46,8 @@ export default {
     },
     data() {
         return {
+            inCD: false,
+            cd: 60,
             bodyStyle: {
                 display: 'flex',
                 flexDirection: 'column',
@@ -52,6 +62,7 @@ export default {
                 password: '',
                 repeat: '',
                 nickName: '',
+                code: '',
             },
             rules: {
                 email: [
@@ -74,29 +85,79 @@ export default {
                 ],
                 nickName: [
                     {required: true, message: '昵称不能为空', trigger: 'blur'}
+                ],
+                code: [
+                    {validator: (rule, value, callback)=>{
+                            if(value !== this.rawCode) callback(new Error('验证码不正确'));
+                            callback();
+                        }, trigger: 'blur'},
+                    {required: true, message: '验证码不能为空', trigger: 'blur'}
                 ]
             },
             verifyCodeShow: false,
+            rawCode: '',
         }
     },
     methods: {
         success() {
-            // console.log(msg);
             this.verifyCodeShow = false;
-            // submit
+            this.rawCode = '';
+            for(let i=0;i<6;++i) {
+                this.rawCode += Math.floor(Math.random()*10).toString();
+            }
+            // this.$message.info(this.rawCode);
+            this.cd = ''
+            this.inCD = true
+            axios.get(this.SERVER_PATH+'/code',{params:this.form})
+                .then(res=>{
+                    if(res.data.status === 200) {
+                        this.cd = 60
+                        this.timer = setInterval(()=>{
+                            this.cd -= 1
+                            if(this.cd === 0) {
+                                clearInterval(this.timer);
+                                this.inCD = false
+                                this.rawCode = ''
+                            }
+                        },1000)
+                    }
+                    else {
+                        this.$message.error(res.data.msg);
+                        this.inCD = false
+                    }
+                })
+                .catch(err=>{
+                    console.log(err);
+                    this.$message.error('服务器错误！');
+                    this.inCD = false
+                })
         },
         close() {
             this.verifyCodeShow = false;
         },
         register() {
             this.$refs['register-form'].validate(valid=>{
-                console.log(valid);
-                if(valid) this.verifyCodeShow = true;
-                // else this.$message({
-                //     showClose: true,
-                //     message: '请输入正确的注册信息！',
-                //     type: 'error'
-                // });
+                if(valid) {
+                    let data = {
+                        userName: this.form.nickName,
+                        password: this.form.password,
+                        email: this.form.email
+                    }
+                    axios.get(this.SERVER_PATH+'/register',{params:data})
+                        .then(res=>{
+                            if(res.data.status === 200) {
+                                this.$message.success('注册成功！')
+                                this.$router.push('/login')
+                            }
+                            else {
+                                this.$message.error(res.data.msg)
+                            }
+                        })
+                        .catch(err=>{
+                            console.log(err)
+                            this.$message.error('服务器错误！')
+                        })
+                }
             })
         },
         login() {
@@ -104,6 +165,13 @@ export default {
         },
         reset() {
             this.$refs['register-form'].resetFields();
+        },
+        verify() {
+            this.$refs['register-form'].validateField('email', (msg)=>{
+                if(msg === '') {
+                    this.verifyCodeShow = true;
+                }
+            })
         }
     }
 }
@@ -117,6 +185,6 @@ export default {
     }
     #register-form {
         width: 600px;
-        margin-top: 100px;
+        margin-top: 20px;
     }
 </style>

@@ -10,7 +10,8 @@
                     <el-input v-model="form.code"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="text" @click="verify">发送验证邮件</el-button>
+                    <el-button type="text" @click="verify" :disabled="inCD">发送验证邮件</el-button>
+                    <el-button type="text" disabled v-if="inCD">{{cd}}秒后重新发送</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="success" @click="next">继续</el-button>
@@ -37,6 +38,7 @@
 
 <script>
 import verifyCode from 'vue-puzzle-vcode';
+import axios from 'axios';
 
 export default {
     name: "Forget",
@@ -45,6 +47,9 @@ export default {
     },
     data() {
         return {
+            inCD: false,
+            cd: 60,
+            timer: null,
             bodyStyle: {
                 margin: 0,
                 padding: '50px',
@@ -96,13 +101,37 @@ export default {
     },
     methods: {
         success() {
-            // console.log(msg);
             this.codeShow = false;
             this.rawCode = '';
             for(let i=0;i<6;++i) {
                 this.rawCode += Math.floor(Math.random()*10).toString();
             }
-            this.$message.info(this.rawCode);
+            // this.$message.info(this.rawCode);
+            this.cd = ''
+            this.inCD = true
+            axios.get(this.SERVER_PATH+'/code',{params:this.form})
+            .then(res=>{
+                if(res.data.status === 200) {
+                    this.cd = 60
+                    this.timer = setInterval(()=>{
+                        this.cd -= 1
+                        if(this.cd === 0) {
+                            clearInterval(this.timer);
+                            this.inCD = false
+                            this.rawCode = ''
+                        }
+                    },1000)
+                }
+                else {
+                    this.$message.error(res.data.msg);
+                    this.inCD = false
+                }
+            })
+            .catch(err=>{
+                console.log(err);
+                this.$message.error('服务器错误！');
+                this.inCD = false
+            })
         },
         close() {
             this.codeShow = false;
@@ -127,9 +156,24 @@ export default {
         confirm() {
             this.$refs['pass-form'].validate(valid=>{
                 if(valid) {
-                    this.$message.success('密码重设成功！')
-                    // update new password
-                    this.login();
+                    let data = {
+                        email: this.form.email,
+                        password: this.passForm.password
+                    }
+                    axios.get(this.SERVER_PATH+'/reset', {params:data})
+                    .then(res=>{
+                        if(res.data.status === 200) {
+                            this.$message.success('密码重设成功！')
+                            this.login()
+                        }
+                        else {
+                            this.$message.error(res.data.msg)
+                        }
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                        this.$message.error('服务器错误！')
+                    })
                 }
             })
         }

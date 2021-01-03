@@ -1,8 +1,8 @@
 <template>
     <el-card :body-style="bodyStyle" shadow="hover" class="card-container">
-        <img :src="cover" class="card-pic">
+        <img :src="pictureUrl" class="card-pic">
         <span class="card-title">{{hotelName}}</span>
-        <span class="card-price">最低价：{{price}}￥</span>
+        <span class="card-price">最低价：{{minPrice}}￥</span>
         <div class="rate-div">
             <i class="el-icon-star-on" style="color: orange; font-size: large">{{stars}}</i>
             <span style="font-size: small; margin-left: 20px; color: grey">{{commentNumber}}人次</span>
@@ -14,9 +14,13 @@
     export default {
         name: "HotelCard",
         props: {
+            uuid: Number,
             hotelName: String,
-            cover: String,
-            price: Number,
+            introduction: String,
+            location: String,
+            roomList: String,
+            pictureUrl: String,
+            minPrice: Number,
             stars: Number,
             commentNumber: Number,
         },

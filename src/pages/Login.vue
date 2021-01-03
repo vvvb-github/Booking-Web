@@ -26,6 +26,8 @@
 </template>
 
 <script>
+    import axios from 'axios';
+
 export default {
     name: "Login",
     data() {
@@ -62,14 +64,29 @@ export default {
         submit() {
             this.$refs['login-form'].validate(valid=>{
                 if(valid) {
-                    console.log(this.form);
-                    // submit
-                } else {
-                    this.$message({
-                        showClose: true,
-                        message: '请输入正确的邮箱和密码！',
-                        type: 'error'
+                    axios.get(this.SERVER_PATH+'/login', {params:this.form})
+                    .then(res=>{
+                        let data = res.data
+                        if(data.status === 200) {
+                            this.$store.commit('user/setToken', data.token)
+                            this.$store.commit('user/setNickName', data.user.nickName)
+                            this.$store.commit('user/setEmail', data.user.email)
+                            this.$store.commit('user/setRealName', data.user.realName)
+                            this.$store.commit('user/setPhone', data.user.phoneNumber)
+                            this.$store.commit('user/setIdNumber', data.user.idCardNumber)
+                            this.$store.commit('user/setIcon', data.user.iconUrl)
+                            this.$router.push('/home')
+                        }
+                        else {
+                            this.$message.error(data.msg)
+                        }
                     })
+                    .catch(err=>{
+                        console.log(err)
+                        this.$message.error('服务器错误！')
+                    })
+                } else {
+                    this.$message.error('请输入正确的邮箱和密码！')
                 }
             })
         },
