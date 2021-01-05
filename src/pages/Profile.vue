@@ -200,6 +200,24 @@ export default {
             console.log(err)
             this.$message.error('图片上传出错！')
         },
+    },
+    created() {
+        axios.get(this.SERVER_PATH+'/token',{params:{token:this.$store.state.user.token}})
+        .then(res=>{
+            if(res.data.status === 200) {
+                if(!res.data.state) {
+                    this.$message.info('您尚未登录，请先登录！')
+                    this.$router.push('/login')
+                }
+            }
+            else {
+                this.$message.error(res.data.msg)
+            }
+        })
+        .catch(err=>{
+            console.log(err)
+            this.$message.error('服务器错误！')
+        })
     }
 }
 </script>

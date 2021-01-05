@@ -19,7 +19,7 @@
                 </el-menu>
             </div>
             <div id="header-user">
-                <el-dropdown v-if="this.$store.state.user.token" style="margin-right: 10px"
+                <el-dropdown v-if="this.$store.state.user.token!=''" style="margin-right: 10px"
                     @command="avatarClick">
                     <span class="el-dropdown-link" :style="{color: this.colorCard.textColor}">
                         {{this.$store.state.user.nickName}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -48,8 +48,8 @@
         name: 'App',
         data() {
             return {
-                avatarLabels: ['个人中心'],
-                avatarPaths: ['/profile'],
+                avatarLabels: ['个人中心','注销账户'],
+                avatarPaths: ['/profile','/login'],
             }
         },
         methods: {
@@ -66,7 +66,7 @@
         },
         computed: {
             iconSrc() {
-                if(this.$store.state.user.token) return this.$store.state.user.icon;
+                if(this.$store.state.user.token!='') return this.$store.state.user.icon;
                 else return 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
             },
         },

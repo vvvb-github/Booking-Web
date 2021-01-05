@@ -99,6 +99,9 @@ export default {
         forget() {
             this.$router.push('/forget')
         }
+    },
+    created() {
+        this.$store.commit('user/setToken', '');
     }
 }
 </script>

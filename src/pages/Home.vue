@@ -62,7 +62,21 @@
                 </div>
             </div>
             <div id="body-div" :style="{backgroundColor: this.colorCard.color5}">
-                <hotel-card v-for="(card,i) in hotels" :key="i" v-bind="card"
+                <hotel-card v-for="(card,i) in hotels" :key="i"
+                            v-bind="{
+                        uuid: card.uuid,
+                        hotelName: card.hotelName,
+                        introduction: card.introduction,
+                        location: card.location,
+                        roomList: card.roomList,
+                        pictureUrl: card.pictureUrl,
+                        minPrice: card.minPrice,
+                        stars: card.stars,
+                        commentNumber: card.commentNumber,
+                        startTime: startTime,
+                        endTime: endTime,
+                        people: people
+                            }"
                 class="hotel-card"></hotel-card>
             </div>
             <div id="bottom-div" :style="{backgroundColor: this.colorCard.color1}">

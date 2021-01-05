@@ -1,5 +1,6 @@
 <template>
-    <el-card :body-style="bodyStyle" shadow="hover" class="card-container">
+    <el-card :body-style="bodyStyle" shadow="hover" class="card-container"
+    @click.native="go">
         <img :src="pictureUrl" class="card-pic">
         <span class="card-title">{{hotelName}}</span>
         <span class="card-price">最低价：{{minPrice}}￥</span>
@@ -23,6 +24,8 @@
             minPrice: Number,
             stars: Number,
             commentNumber: Number,
+            startTime: Date,
+            endTime: Date
         },
         data() {
             return {
@@ -37,6 +40,19 @@
                     flexDirection: 'column',
                     alignItems: 'flex-start',
                 }
+            }
+        },
+        methods: {
+            go() {
+                this.$router.push({
+                    path: '/detail',
+                    query: {
+                        uuid: this.uuid,
+                        startTime: this.startTime,
+                        endTime: this.endTime,
+                        customerNumber: this.people
+                    }
+                })
             }
         }
     }

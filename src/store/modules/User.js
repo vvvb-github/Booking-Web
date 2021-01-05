@@ -1,7 +1,7 @@
 const state = () => ({
     nickName: 'vvvb',
     icon: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=921151223,1267112089&fm=11&gp=0.jpg',
-    token: null,
+    token: '',
     email: '1405205313@qq.com',
     phone: '15850601693',
     realName: '宋一凡',
