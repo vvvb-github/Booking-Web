@@ -1,8 +1,8 @@
 <template>
-    <el-card id="container" :body-style="bodyStyle" shadow="hover" @click.native="go">
-        <img :src="pictureUrl" class="pic">
+    <el-card id="container" :body-style="bodyStyle" shadow="hover" >
+        <img :src="pictureUrl" class="pic" @click="go">
         <div class="info" style="width: 200px">
-            <span class="title">{{hotelName}}</span>
+            <span class="title" @click="go">{{hotelName}}</span>
             <span class="price">{{price}}￥</span>
             <span class="type">{{title}}</span>
         </div>
@@ -145,12 +145,13 @@ export default {
 
 <style scoped>
     #container {
-        cursor: pointer;
+        cursor: default;
     }
     .pic {
         width: 150px;
         height: 150px;
         object-fit: fill;
+        cursor: pointer;
     }
     .info {
         display: flex;
@@ -163,6 +164,7 @@ export default {
         font-size: 30px;
         font-weight: bold;
         color: blue;
+        cursor: pointer;
     }
     .time {
         font-size: 20px;
