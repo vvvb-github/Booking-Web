@@ -177,7 +177,7 @@ import axios from 'axios';
                 Rooms:[
 
                 ],
-                choosedOption:'',
+                choosedOption:'0',
                 Bonus:[
                     {
                         title:"提供早餐",
@@ -254,7 +254,7 @@ import axios from 'axios';
                 console.log(this.query.endTime);
                 var tmp1 = new Date(this.query.startTime);
                 var tmp2 = new Date(this.query.endTime);
-                return 2*(tmp2-tmp1)/(1*24*60*60*1000);
+                return this.hotel.roomList[parseInt(this.choosedOption)].roomPrice*(tmp2-tmp1)/(1*24*60*60*1000);
             },
             validPrice:function(){
                 return this.totalPrice > 0;
