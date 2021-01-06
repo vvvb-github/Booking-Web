@@ -32,7 +32,7 @@
                         <span type="info" class="tag-info">入住时间</span>
                         <el-date-picker
                             v-model="startTime"
-                            type="datetime"
+                            type="date"
                             placeholder="选择时间"
                             align="right"
                             :picker-options="pickerOptions">
@@ -42,7 +42,7 @@
                         <span type="info" class="tag-info">退房时间</span>
                         <el-date-picker
                             v-model="endTime"
-                            type="datetime"
+                            type="date"
                             placeholder="选择时间"
                             align="right"
                             :picker-options="pickerOptions">
@@ -105,20 +105,6 @@
                         text: '今天',
                         onClick(picker) {
                             picker.$emit('pick', new Date());
-                        }
-                    }, {
-                        text: '昨天',
-                        onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() - 3600 * 1000 * 24);
-                            picker.$emit('pick', date);
-                        }
-                    }, {
-                        text: '一周前',
-                        onClick(picker) {
-                            const date = new Date();
-                            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-                            picker.$emit('pick', date);
                         }
                     }]
                 },
