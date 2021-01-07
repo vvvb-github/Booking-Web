@@ -97,10 +97,13 @@
             return {
                 dockVisible: false,
                 searchContext: '',
-                startTime: new Date(),
-                endTime: new Date(),
+                startTime: '',
+                endTime: '',
                 people: 1,
                 pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() < Date.now()-3600*24*1000;
+                    },
                     shortcuts: [{
                         text: '今天',
                         onClick(picker) {

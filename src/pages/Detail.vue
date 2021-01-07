@@ -54,7 +54,7 @@
                     </div>
                     <div class="twoSideBlock" >
                         <span class="select-font">选择房型</span>
-                        <el-select v-model="choosedOption" placeholder="请选择房型">
+                        <el-select v-model="choosedOption" placeholder="请选择房型" @change="changeOption">
                             <el-option
                             v-for="(room,i) in hotel.roomList"
                             :key="i"
@@ -72,7 +72,11 @@
                          <span style="font-size:35px">¥</span>                       
                     </div>
                     <div class="centerBlock">
-                        <el-button round type="primary" icon="el-icon-check">预定房间</el-button>
+                        <el-button round type="primary" icon="el-icon-check" 
+                            v-bind:disabled="!validPrice"
+                            @click="dialogFormVisible = true">
+                            预定房间
+                        </el-button>
                     </div>
                 </el-card>
             </el-aside>
@@ -110,25 +114,81 @@
                             </div>
                         </div>
                     </div>
-                    <el-collapse v-model="activeNames" @change="handleChange" border-radius=30px>
+                    <el-collapse v-model="activeNames" @change="handleChange" style="border-radius=30px">
                         <div 
                             v-for="(room,i) in hotel.roomList"
                             :key="i">
-                            <el-collapse-item 
-                                border-radius=30px
-                                :title="room.roomName" 
-                                :name="i" 
-                                class="room-item">
-                                <span>这是第{{i}}个房间</span>
-                            </el-collapse-item>
+                            <el-card>
+                                <el-collapse-item    
+                                    :title="room.roomName" 
+                                    :name="i" 
+                                    class="room-item">
+                                    <template slot="title">
+                                        <div class="twoSideBlock">
+                                            <div>
+                                                <span>{{room.roomName}}</span>
+                                                <span :style="{color: pColor}">    {{room.roomPrice}} ¥</span>
+                                            </div>
+                                            <div>
+                                                <span>可入住人数：</span>
+                                                <i class="header-icon el-icon-user"></i>
+                                                <span> {{room.roomCapacity}}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <div class="room-Picture-Title-Block">
+                                        <el-image
+                                                :src="room.roomPic"
+                                                fit="cover"
+                                                class="room-Picture"
+                                                style="padding:0px;border-radius:5px"
+                                                :preview-src-list="[room.roomPic]"
+                                                >
+                                        </el-image>
+                                        <div class="room-Title-Block">
+                                            <p style="white-space: pre-wrap" :style="{color: Colors.text}">{{room.roomIntro}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </el-collapse-item>
+                            </el-card>
                         </div>
                     </el-collapse>
                 </el-main>
             </el-container>
             <el-aside :style="{width: pageSideMargin}"></el-aside>
         </el-container>
+        <!-- Table -->
+        <el-dialog title="住客信息" :visible.sync="dialogFormVisible" >
+            <el-form label-width=100px 
+                labelPosition="left"
+                v-for="i in people"
+                :key="i">
+                <el-card style="margin-bottom:5px">
+                <span style="margin-bottom:40px,margin-left:5px">客人{{i}}:</span>
+                <div style="margin:5px">
+                    <el-form-item label="客人姓名 ">
+                        <el-input></el-input>
+                    </el-form-item>
+                    <el-form-item label="客人身份证">
+                        <el-input></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注信息 ">
+                        <el-input></el-input>
+                    </el-form-item>
+                </div>
+                </el-card>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false;submit">确 定</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
+
+
 
 <script>
 import axios from 'axios';
@@ -161,6 +221,8 @@ import axios from 'axios';
                 minPeople:1,
                 maxPeople:3,
                 customerCount:1,
+                dialogTableVisible:false,
+                dialogFormVisible:false,
                 hotel:{
                     hotelName:'',
                     telNumber:'',
@@ -174,10 +236,11 @@ import axios from 'axios';
                 },
                 tmpColor1:'',
                 tmpColor2:'',
+                pColor:'',
                 Rooms:[
 
                 ],
-                choosedOption:'0',
+                choosedOption:0,
                 Bonus:[
                     {
                         title:"提供早餐",
@@ -199,6 +262,34 @@ import axios from 'axios';
             }
         },            
         methods:{
+            submit(){
+                let data ={
+                    token:this.$store.state.user.token,
+                    hotelID:this.query.hotelID,
+                    roomID:this.query.roomList[this.choosedOption].roomID,
+                    price:this.totalPrice,
+                    startDate:this.query.startTime,
+                    endDate:this.query.endDate,
+                    CustomerNumber:this.people
+                }
+                axios.get(this.SERVER_PATH+'/reserve',{params:data})
+                .then(res=>{
+                        if(res.data.status === 200){
+                            this.$message.succuss('预定成功！');
+                        } else {
+                            this.$message.error("预定失败");
+                        }
+                }).catch(err=>{
+                    console.log(err);
+                    this.$message.error('服务器错误');
+                })
+            },
+            changeOption(){
+                this.maxPeople=this.hotel.roomList[this.choosedOption].roomCapacity;
+                if(this.maxPeople<this.people){
+                    this.people=this.maxPeople;
+                }
+            },  
             handleChange(val){
                 console.log(val);
             },
@@ -257,7 +348,7 @@ import axios from 'axios';
                 return this.hotel.roomList[parseInt(this.choosedOption)].roomPrice*(tmp2-tmp1)/(1*24*60*60*1000);
             },
             validPrice:function(){
-                return this.totalPrice > 0;
+                return this.totalPrice > 0 ;
             }
         },
         created:function(){
@@ -267,9 +358,10 @@ import axios from 'axios';
             this.getDetails()
             this.tmpColor1=this.Colors.element2;
             this.tmpColor2=this.Colors.plain;
-            // this.query.startTime=(this.$route.query.startTime);
-            // this.query.endTime=(this.$route.query.endTime);
-            this.query=this.$route.query;
+            this.pColor=this.Colors.element0;
+            //this.query.startTime=(this.$route.query.startTime);
+            //this.query.endTime=(this.$route.query.endTime);
+            this.query=this.$route.params;
             //this.$refs.st.$emit('pick',new Date(this.$route.query.startTime));
             //this.$refs.et.$emit('pick', new Date());
         }
@@ -343,8 +435,24 @@ import axios from 'axios';
         white-space: pre-wrap;
     }
     .room-item{
-        margin-top:40px;
+        margin-bottom:5px;
         margin-left:5px;
-
+    }
+    .room-Picture{
+        width:50%;
+        padding:0px;
+    }
+    .room-Picture-Title-Block{
+        margin:10px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+    .room-Title-Block{
+        margin-left:10px;
+        width:50%;
+        display:flex;
+        flex-direction:column;
+        align-items: flex-start;
     }
 </style>

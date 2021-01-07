@@ -45,8 +45,8 @@
         methods: {
             go() {
                 this.$router.push({
-                    path: '/detail',
-                    query: {
+                    name: 'detail',
+                    params: {
                         uuid: this.uuid,
                         startTime: this.startTime,
                         endTime: this.endTime,

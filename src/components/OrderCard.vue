@@ -110,8 +110,8 @@ export default {
         },
         go() {
             this.$router.push({
-                path: '/detail',
-                query: {
+                name: 'detail',
+                params: {
                     uuid: this.hotelId,
                     startTime: this.startTime,
                     endTime: this.endTime,
