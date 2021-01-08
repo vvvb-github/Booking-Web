@@ -78,9 +78,27 @@
                         people: people
                             }"
                 class="hotel-card"></hotel-card>
+                <div v-if="hotels.length===0" style="margin-top: 100px;font-size: 25px">
+                    没有符合条件的酒店=……=
+                </div>
             </div>
             <div id="bottom-div" :style="{backgroundColor: this.colorCard.color1}">
                 <img src="../assets/logo.png" id="bottom-logo">
+                <div id="dev-div">
+                    <span style="font-size: 25px;font-weight: bold;color: white;">
+                        开发团队<span style="margin-left: 5px;font-size: 27px;font-weight: bold;color: yellow">摸鱼大队</span>
+                    </span>
+                    <div id="dever">
+                        <div class="developer" v-for="(dev,i) in developer" :key="i">
+                            <el-avatar :size="100" fit="fill" :src="dev.icon" shape="square"></el-avatar>
+                            <div class="dev-info">
+                                <span style="font-weight: bold;color: yellow;font-size: 23px">@{{dev.nick}}</span>
+                                <span style="color: white;font-size: 20px">{{dev.name}}</span>
+                                <span style="color: white;font-size: 20px">{{dev.id}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -123,17 +141,31 @@
                         chosen: 0
                     }
                 ],
-                hotels: [
+                hotels: [],
+                developer: [
                     {
-                        uuid: 0,
-                        hotelName: '姬哥酒店',
-                        introduction: '',
-                        location: '',
-                        roomList: '',
-                        pictureUrl: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        minPrice: 1000,
-                        stars: 4.6,
-                        commentNumber: 1024,
+                        name: '高圣沂',
+                        id: '09018133',
+                        icon: 'http://www.kxhome.xyz:8094/images/vvvb.png',
+                        nick: 'vvvb',
+                    },
+                    {
+                        name: '薛江天',
+                        id: '09018138',
+                        icon: 'http://www.kxhome.xyz:8094/images/xjt.png',
+                        nick: 'CrescentRose',
+                    },
+                    {
+                        name: '陈曦',
+                        id: '09018124',
+                        icon: 'http://www.kxhome.xyz:8094/images/cdd.png',
+                        nick: 'stupid_cdd',
+                    },
+                    {
+                        name: '宋一凡',
+                        id: '09018116',
+                        icon: 'http://www.kxhome.xyz:8094/images/syf.png',
+                        nick: 'syfufo',
                     },
                 ],
             }
@@ -151,9 +183,11 @@
                     type: this.selector[0].items[this.selector[0].chosen],
                     location: this.selector[1].items[this.selector[1].chosen],
                 }
+                if(data.location === '全部') data.location = '';
                 axios.get(this.SERVER_PATH+'/search',{params:data})
                 .then(res=>{
                     let data = res.data
+                    console.log(data)
                     if(data.status === 200) {
                         this.hotels = data.hotelList
                     }
@@ -178,90 +212,105 @@
 </script>
 
 <style scoped>
-    #dock-btn {
-        position: fixed;
-        left: 0;
-        top: 40%;
-        width: 20px;
-        height: 100px;
-        z-index: 1;
-        padding: 0;
+#dock-btn {
+    position: fixed;
+    left: 0;
+    top: 40%;
+    width: 20px;
+    height: 100px;
+    z-index: 1;
+    padding: 0;
+}
+#container {
+}
+#dock {
+    width: 1000px;
+}
+#dock-nav {
+    width: 100%;
+    height: 100%;
+}
+#top-div {
+    padding: 10px;
+}
+#search-div {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 20px;
+}
+.tab-div {
+    display: flex;
+    flex-direction: column;
+}
+.tag-info {
+    font-size: large;
+    padding: 5px;
+    font-weight: bold;
+}
+.select-div {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+}
+.select-title {
+    font-size: larger;
+    font-weight: bold;
+    margin-left: 20%;
+}
+.select-item {
+    font-size: large;
+    margin-left: 20px;
+    cursor: pointer;
+}
+.select-item-chosen {
+    font-size: large;
+    margin-left: 20px;
+    cursor: pointer;
+    color: blue;
+}
+#body-div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-bottom: 50px;
+}
+.hotel-card {
+    width: 300px;
+    margin: 20px;
+}
+#bottom-div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 20px 10%;
+}
+#bottom-logo {
+    width: 200px;
+    height: 120px;
+    object-fit: cover;
+}
+    #dev-div {
+        margin-left: 50px;
     }
-    #container {
-    }
-    #dock {
-        width: 1000px;
-    }
-    #dock-nav {
-        width: 100%;
-        height: 100%;
-    }
-
-    #top-div {
-        padding: 10px;
-    }
-
-    #search-div {
+    #dever {
         display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        padding: 20px;
+        justify-content: space-around;
+        margin-top: 15px;
     }
-    .tab-div {
+    .developer {
+        display: flex;
+        /*width: 250px;*/
+        justify-content: space-around;
+    }
+    .dev-info {
         display: flex;
         flex-direction: column;
-    }
-    .tag-info {
-        font-size: large;
-        padding: 5px;
-        font-weight: bold;
-    }
-
-    .select-div {
-        display: flex;
-        align-items: center;
-        margin: 10px;
-    }
-    .select-title {
-        font-size: larger;
-        font-weight: bold;
-        margin-left: 20%;
-    }
-    .select-item {
-        font-size: large;
-        margin-left: 20px;
-        cursor: pointer;
-    }
-    .select-item-chosen {
-        font-size: large;
-        margin-left: 20px;
-        cursor: pointer;
-        color: blue;
-    }
-
-    #body-div {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        padding-left: 10%;
-        padding-right: 10%;
-        padding-bottom: 50px;
-    }
-    .hotel-card {
-        width: 300px;
-        margin: 20px;
-    }
-
-    #bottom-div {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        padding: 20px 10%;
-    }
-    #bottom-logo {
-        width: 200px;
-        height: 120px;
-        object-fit: cover;
+        justify-content: space-around;
+        margin-right: 25px;
+        margin-left: 5px;
     }
 
 </style>

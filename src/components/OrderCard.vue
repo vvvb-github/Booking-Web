@@ -7,16 +7,20 @@
             <span class="type">{{title}}</span>
         </div>
         <div class="info">
-            <span class="time">入住：{{startTime.getFullYear()}}.{{startTime.getMonth()+1}}.{{startTime.getDay()}}</span>
-            <span class="time">退房：{{endTime.getFullYear()}}.{{endTime.getMonth()+1}}.{{endTime.getDay()}}</span>
+            <span class="time">入住：{{startTime}}</span>
+            <span class="time">退房：{{endTime}}</span>
             <span class="time">房客数量：{{customerNumber}}人</span>
         </div>
         <div class="info" style="width: 250px">
             <span :style="{color: stateColor(state)}" class="state">{{orderState(state)}}</span>
-            <el-button v-if="state===0" size="small" type="primary" @click="quit"
-                       style="width: 100px">退订</el-button>
+            <div v-if="state===0" class="z-div">
+                <el-button size="small" type="primary" @click="quit"
+                           style="width: 100px">退订</el-button>
+                <el-button size="small" type="success" @click="ok"
+                           style="width: 100px">完成</el-button>
+            </div>
             <el-button v-if="state===1" size="small" type="warning" @click="rateBox=true"
-                style="width: 100px">点击评分</el-button>
+                       style="width: 100px">点击评分</el-button>
             <el-rate v-if="state===2" disabled show-score v-model="star" text-color="#ff9900"></el-rate>
         </div>
         <el-dialog title="用户评分" :visible.sync="rateBox">
@@ -37,8 +41,8 @@ export default {
         orderID: Number,
         pictureUrl: String,
         hotelName: String,
-        startTime: Date,
-        endTime: Date,
+        startTime: String,
+        endTime: String,
         customerNumber: Number,
         price: Number,
         title: String,
@@ -122,13 +126,33 @@ export default {
         quit() {
             let data = {
                 token: this.$store.state.user.token,
-                orderID: this.orderID
+                orderId: this.orderID
             }
             axios.get(this.SERVER_PATH+'/cancel', {params:data})
                 .then(res=>{
                     if(res.data.status === 200) {
                         this.$message.success('退订成功！')
                         this.state = 3
+                    }
+                    else {
+                        this.$message.error(res.data.msg)
+                    }
+                })
+                .catch(err=>{
+                    console.log(err)
+                    this.$message.error('服务器错误！')
+                })
+        },
+        ok() {
+            let data = {
+                token: this.$store.state.user.token,
+                orderId: this.orderID
+            }
+            axios.get(this.SERVER_PATH+'/complete', {params:data})
+                .then(res=>{
+                    if(res.data.status === 200) {
+                        this.$message.success('订单刷新成功！')
+                        this.state = 1
                     }
                     else {
                         this.$message.error(res.data.msg)
@@ -181,5 +205,8 @@ export default {
     .state {
         font-size: 25px;
         font-weight: bold;
+    }
+    .z-div {
+        display: flex;
     }
 </style>

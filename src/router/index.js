@@ -6,7 +6,6 @@ import Register from "@/pages/Register";
 import Profile from "@/pages/Profile";
 import Forget from "@/pages/Forget";
 import Detail from "@/pages/Detail";
-import Order from "@/pages/Order";
 import MyOrder from "@/pages/MyOrder";
 
 Vue.use(Router)
@@ -42,11 +41,6 @@ export default new Router({
             path: '/detail',
             name: 'detail',
             component: Detail
-        },
-        {
-            path: '/order',
-            name: 'order',
-            component: Order
         },
         {
             path: '/my-order',

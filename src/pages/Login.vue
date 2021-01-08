@@ -27,6 +27,7 @@
 
 <script>
     import axios from 'axios';
+    // import qs from 'qs'
 
 export default {
     name: "Login",
@@ -75,7 +76,7 @@ export default {
                             this.$store.commit('user/setPhone', data.user.phoneNumber)
                             this.$store.commit('user/setIdNumber', data.user.idCardNumber)
                             this.$store.commit('user/setIcon', data.user.iconUrl)
-                            this.$router.push('/home')
+                            this.$router.push('/')
                         }
                         else {
                             this.$message.error(data.msg)

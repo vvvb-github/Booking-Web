@@ -3,6 +3,7 @@
         <div id="order-list">
             <order-card v-for="(order,index) in orders" :key="index"
                         v-bind="order" class="order-card"></order-card>
+            <div v-if="orders.length===0" style="margin-top: 100px;font-size: 25px">您尚无订单，快去预定吧！</div>
         </div>
     </div>
 </template>
@@ -15,36 +16,7 @@
         components: {OrderCard},
         data() {
             return {
-                orders: [
-                    {
-                        orderID: 0,
-                        pictureUrl: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        hotelName: '姬哥酒店',
-                        startTime: new Date(),
-                        endTime: new Date(),
-                        customerNumber: 1,
-                        price: 648,
-                        title: '大床房',
-                        state: 0,
-                        star: 0,
-                        hotelId: 0,
-                        roomId: 0,
-                    },
-                    {
-                        orderID: 0,
-                        pictureUrl: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2339646227,2088146489&fm=26&gp=0.jpg',
-                        hotelName: '姬哥酒店',
-                        startTime: new Date(),
-                        endTime: new Date(),
-                        customerNumber: 1,
-                        price: 648,
-                        title: '大床房',
-                        state: 1,
-                        star: 4.6,
-                        hotelId: 0,
-                        roomId: 0,
-                    },
-                ],
+                orders: [],
             }
         },
         methods: {
@@ -52,14 +24,27 @@
         created() {
             axios.get(this.SERVER_PATH+'/token',{params:{token:this.$store.state.user.token}})
                 .then(res=>{
-                    if(res.data.status === 200) {
+                    console.log(res.data)
+                    if(res.data.status === 500) {
                         if(!res.data.state) {
                             this.$message.info('您尚未登录，请先登录！')
                             this.$router.push('/login')
                         }
                     }
-                    else {
-                        this.$message.error(res.data.msg)
+                    else if(res.data.status === 200){
+                        axios.get(this.SERVER_PATH+'/orders', {params:{token:this.$store.state.user.token}})
+                            .then(res=>{
+                                if(res.data.status === 200) {
+                                    this.orders = res.data.orderList
+                                }
+                                else {
+                                    this.$message.error(res.data.msg)
+                                }
+                            })
+                            .catch(err=>{
+                                console.log(err)
+                                this.$message.error('服务器错误！')
+                            })
                     }
                 })
                 .catch(err=>{
@@ -67,21 +52,6 @@
                     this.$message.error('服务器错误！')
                 })
         },
-        mounted() {
-            axios.get(this.SERVER_PATH+'/orders', {params:{token:this.$store.state.user.token}})
-                .then(res=>{
-                    if(res.data.status === 200) {
-                        this.orders = res.data.orderList
-                    }
-                    else {
-                        this.$message.error(res.data.msg)
-                    }
-                })
-                .catch(err=>{
-                    console.log(err)
-                    this.$message.error('服务器错误！')
-                })
-        }
     }
 </script>
 

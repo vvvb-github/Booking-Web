@@ -109,7 +109,11 @@ export default {
             // this.$message.info(this.rawCode);
             this.cd = ''
             this.inCD = true
-            axios.get(this.SERVER_PATH+'/code',{params:this.form})
+            let data = {
+                email: this.form.email,
+                code: this.rawCode
+            }
+            axios.get(this.SERVER_PATH+'/code',{params:data})
             .then(res=>{
                 if(res.data.status === 200) {
                     this.cd = 60

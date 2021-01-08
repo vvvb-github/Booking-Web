@@ -92,7 +92,7 @@
                             :style="{color: this.Colors.text}">
                             {{ hotel.hotelIntro}}
                         </span>
-                        <div style="display:flex;flex-direction:row-reverse;width=100%;margin:20px">
+                        <div style="display:flex;flex-direction:row-reverse;width:100%;margin:20px">
                             <el-rate 
                                 margin=20px
                                 v-model="hotel.rate"
@@ -114,7 +114,7 @@
                             </div>
                         </div>
                     </div>
-                    <el-collapse v-model="activeNames" @change="handleChange" style="border-radius=30px">
+                    <el-collapse v-model="activeNames" @change="handleChange" style="border-radius:30px">
                         <div 
                             v-for="(room,i) in hotel.roomList"
                             :key="i">
@@ -165,30 +165,28 @@
                 v-for="i in people"
                 :key="i">
                 <el-card style="margin-bottom:5px">
-                <span style="margin-bottom:40px,margin-left:5px">客人{{i}}:</span>
+                <span style="margin-bottom:40px;margin-left:5px">客人{{i}}:</span>
                 <div style="margin:5px">
                     <el-form-item label="客人姓名 ">
-                        <el-input></el-input>
+                        <el-input v-model="dag.a"></el-input>
                     </el-form-item>
                     <el-form-item label="客人身份证">
-                        <el-input></el-input>
+                        <el-input v-model="dag.b"></el-input>
                     </el-form-item>
                     <el-form-item label="备注信息 ">
-                        <el-input></el-input>
+                        <el-input v-model="dag.c"></el-input>
                     </el-form-item>
                 </div>
                 </el-card>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false;submit">确 定</el-button>
+                <el-button type="primary" @click="submit">确 定</el-button>
             </div>
         </el-dialog>
 
     </div>
 </template>
-
-
 
 <script>
 import axios from 'axios';
@@ -197,6 +195,11 @@ import axios from 'axios';
 
         data(){
             return{
+                dag:{
+                    a:'',
+                    b:'',
+                    c:'',
+                },
                 query:{
                     uuid:0,
                     startTime:'',
@@ -210,7 +213,7 @@ import axios from 'axios';
                     shortcuts: [{
                         text: '今天',
                         onClick(picker) {
-                        picker.$emit('pick', new Date());
+                            picker.$emit('pick', new Date());
                         }
                     }]
                 },
@@ -265,24 +268,26 @@ import axios from 'axios';
             submit(){
                 let data ={
                     token:this.$store.state.user.token,
-                    hotelID:this.query.hotelID,
-                    roomID:this.query.roomList[this.choosedOption].roomID,
+                    hotelId:this.query.uuid,
+                    roomId:this.hotel.roomList[parseInt(this.choosedOption)].roomUUID,
                     price:this.totalPrice,
-                    startDate:this.query.startTime,
-                    endDate:this.query.endDate,
-                    CustomerNumber:this.people
+                    startTime:this.query.startTime.Format('yyyy-MM-dd'),
+                    endTime:this.query.endTime.Format('yyyy-MM-dd'),
+                    customerNumber:this.people
                 }
                 axios.get(this.SERVER_PATH+'/reserve',{params:data})
-                .then(res=>{
-                        if(res.data.status === 200){
-                            this.$message.succuss('预定成功！');
-                        } else {
-                            this.$message.error("预定失败");
-                        }
-                }).catch(err=>{
-                    console.log(err);
-                    this.$message.error('服务器错误');
-                })
+                    .then(res=>{
+                            if(res.data.status === 200){
+                                this.$message.success('预定成功！');
+                            } else {
+                                this.$message.error('登录失效，请重新登录！');
+                                this.$router.push('/login')
+                            }
+                            this.dialogFormVisible = false
+                    }).catch(err=>{
+                        console.log(err);
+                        this.$message.error('服务器错误');
+                    })
             },
             changeOption(){
                 this.maxPeople=this.hotel.roomList[this.choosedOption].roomCapacity;
@@ -295,13 +300,14 @@ import axios from 'axios';
             },
             getDetails(){  
                 let data = {
-                    HotelID :this.$route.query.uuid
+                    hotelId :this.$route.params.uuid
                 }
+                console.log(data)
                 axios.get(this.SERVER_PATH+'/hotel',{params:data})
                 .then(res=>{
                         if(res.data.status === 200) {
-                            console.log("ok")
-                            this.hotel=res.data.hotel;
+                            console.log(res.data);
+                            this.hotel=res.data;
                         } else {
                             this.$message.error(res.data.msg)
                         }
@@ -309,34 +315,6 @@ import axios from 'axios';
                 .catch(err=>{
                     console.log(err)
                     this.$message.error('服务器错误！')
-                    this.hotel.hotelName='【揽海苑】180°一线海景一居室 解放路亿恒夜市附近 五星级酒店备品';
-                    this.hotel.hotelIntro="\u3000\u3000屋子位于三亚市市区（天涯区）解放路与水城路交汇的温泉丽景公寓 50平大一室. \n\u3000\u3000房间正对三亚湾海岸线,超大阳台落地窗 180°一线海景 2*2.4超大床\n\u3000\u3000可做饭可洗衣晾衣开放式厨房\n\u3000\u3000靠近三亚湾 椰梦长廊 红树林\n\u3000\u3000希尔顿床品卫浴 日本马油洗发水沐浴露 空调 空气净化器 抽湿机 冰箱洗衣机 电视 微波炉 风扇 热水器 无线Wifi 一应俱全\n\u3000\u3000公寓楼下有收费停车场，交通便利步行至海边约15分钟 步行至亿恒夜市约3分钟。附近超市菜市场配套齐全，生活方便，公交直达三亚周边各大景点，交通便利。\n\u3000\u3000房间20年初装修后空置一整年，房间很新无甲醛。";
-                    this.hotel.location="三亚·天涯区";
-                    this.hotel.locationDetail="屋子位于三亚市市区（天涯区）解放路与水城路交汇的温泉丽景公寓,房间正对三亚湾海岸线";
-                    this.hotel.rate=4.3;
-                    this.hotel.pictureList=[
-                        "https://z1.muscache.cn/im/pictures/428b8d9d-9918-4ebb-a10c-38de3346e4b1.jpg?aki_policy=xx_large",
-                        "https://z1.muscache.cn/im/pictures/11336d39-8f6c-481e-982c-c70397150976.jpg?aki_policy=x_large",
-                        "https://z1.muscache.cn/im/pictures/b786cada-ea8d-496c-8751-338936bbdda5.jpg?aki_policy=x_large"
-                    ]
-                    this.hotel.roomList=[
-                        {
-                            roomPic:"https://z1.muscache.cn/im/pictures/4b7e54c6-434d-4674-8045-16a4865144e6.jpg?aki_policy=xx_large",
-                            roomName:'工业风大床房',
-                            roomIntro:'\u3000\u3000当阳光、海滩、冲浪以绚烂的街头涂鸦形式呈现在裸露的砖墙水泥之上，热情与酷拽彼此碰撞，最年轻的、专属于三亚的活力与态度在此间跃然而出。\n\u3000\u3000这是三亚首家Loft工业怀旧风格的客栈，拥有【初见】、【记忆】、【流年】、【年华】、【如初】、【时光】等6种独立房型，可满足单身放空、闺蜜逛吃、基友浪嗨、情侣蜜月、亲子时光等多种住宿需求。',
-                            roomPrice:351,
-                            roomCapacity:3,
-                            roomUUID:1122
-                        },
-                        {
-                            roomPic:"https://z1.muscache.cn/im/pictures/4b7e54c6-434d-4674-8045-16a4865144e6.jpg?aki_policy=xx_large",
-                            roomName:'工业风双人间',
-                            roomIntro:'\u3000\u3000当阳光、海滩、冲浪以绚烂的街头涂鸦形式呈现在裸露的砖墙水泥之上，热情与酷拽彼此碰撞，最年轻的、专属于三亚的活力与态度在此间跃然而出。\n\u3000\u3000这是三亚首家Loft工业怀旧风格的客栈，拥有【初见】、【记忆】、【流年】、【年华】、【如初】、【时光】等6种独立房型，可满足单身放空、闺蜜逛吃、基友浪嗨、情侣蜜月、亲子时光等多种住宿需求。',
-                            roomPrice:352,
-                            roomCapacity:2,
-                            roomUUID:1123
-                        }
-                    ]
                 })
             }
         },
@@ -352,18 +330,11 @@ import axios from 'axios';
             }
         },
         created:function(){
-
-        },
-        mounted:function(){
             this.getDetails()
             this.tmpColor1=this.Colors.element2;
             this.tmpColor2=this.Colors.plain;
             this.pColor=this.Colors.element0;
-            //this.query.startTime=(this.$route.query.startTime);
-            //this.query.endTime=(this.$route.query.endTime);
             this.query=this.$route.params;
-            //this.$refs.st.$emit('pick',new Date(this.$route.query.startTime));
-            //this.$refs.et.$emit('pick', new Date());
         }
     }
 </script>
@@ -429,7 +400,7 @@ import axios from 'axios';
         margin-bottom: 10px;
     }
     .icon-list-item{
-        font-size:18;
+        font-size: 18px;
     }
     .enableEnter{
         white-space: pre-wrap;

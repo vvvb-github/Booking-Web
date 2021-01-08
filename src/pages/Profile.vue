@@ -156,6 +156,11 @@ export default {
                     this.$store.commit('user/setPhone', data.phoneNumber)
                     this.$store.commit('user/setIdNumber', data.idCardNumber)
                     this.$message.success('修改成功！')
+                    this.show.nickName = true
+                    this.show.email = true
+                    this.show.idNumber = true
+                    this.show.phone = true
+                    this.show.realName = true
                 }
                 else {
                     this.$message.error(res.data.msg)
@@ -192,6 +197,7 @@ export default {
             if(res.status === 1){
                 this.$message.success('图片上传成功!')
                 this.$store.commit('user/setIcon', res.url)
+                this.editAvatar = false;
             }else{
                 this.$message.error(res.msg)
             }
