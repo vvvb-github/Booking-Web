@@ -1,18 +1,18 @@
 <template>
     <div id="container" :style="{backgroundColor: this.Colors.bk1}">
-        <el-carousel id="top-carousel" 
-                     indicator-position="outside" 
+        <el-carousel id="top-carousel"
+                     indicator-position="outside"
                      type="card"
                      :interval="4000"
                      height="400px"
-                    >
-            <el-carousel-item v-for="(data,i) in hotel.pictureList" 
-                            :key="i"
-                            style="display:flex;justify-content:center">
+        >
+            <el-carousel-item v-for="(data,i) in hotel.pictureList"
+                              :key="i"
+                              style="display:flex;justify-content:center">
                 <el-image :src="data"
-                     class="carouselPicture"
-                     fit="cover"
-                     >
+                          class="carouselPicture"
+                          fit="cover"
+                >
                 </el-image>
             </el-carousel-item>
         </el-carousel>
@@ -20,61 +20,61 @@
             <el-aside :style="{width: pageSideMargin}"></el-aside>
             <el-aside width="32%" id="side-date" :style="{backgroundColor: this.Colors.bk1}">
                 <el-card :body-style="{backgroundColor:this.Colors.bk2, width:'100%',padding: '0px',display:'flex',flexDirection:'column',alignItems:'center'}"
-                class="date-picker">
+                         class="date-picker">
                     <div class="twoSideBlock" >
                         <span  class="select-font" >入住日期</span>
-                        <el-date-picker  
-                            id="st"
-                            ref="st"
-                            class="selector"
-                            v-model="query.startTime"
-                            align=“middle”
-                            type="date"
-                            placeholder="选择日期"
-                            :picker-options="pickerOptions">
+                        <el-date-picker
+                                id="st"
+                                ref="st"
+                                class="selector"
+                                v-model="query.startTime"
+                                align=“middle”
+                                type="date"
+                                placeholder="选择日期"
+                                :picker-options="pickerOptions">
                         </el-date-picker>
                     </div>
                     <div class="twoSideBlock" >
                         <span class="select-font">退房日期</span>
                         <el-date-picker
-                            id="et"
-                            ref="et"
-                            class="selector"
-                            v-model="query.endTime"
-                            align=“middle”
-                            type="date"
-                            placeholder="选择日期"
-                            :picker-options="pickerOptions">
+                                id="et"
+                                ref="et"
+                                class="selector"
+                                v-model="query.endTime"
+                                align=“middle”
+                                type="date"
+                                placeholder="选择日期"
+                                :picker-options="pickerOptions">
                         </el-date-picker >
                     </div>
                     <div class="twoSideBlock" >
                         <span class="select-font">房客人数</span>
-                      <el-input-number v-model="people" :min="minPeople" :max="maxPeople" style="margin-left:0px">
+                        <el-input-number v-model="people" :min="minPeople" :max="maxPeople" style="margin-left:0px">
                         </el-input-number >
                     </div>
                     <div class="twoSideBlock" >
                         <span class="select-font">选择房型</span>
                         <el-select v-model="choosedOption" placeholder="请选择房型" @change="changeOption">
                             <el-option
-                            v-for="(room,i) in hotel.roomList"
-                            :key="i"
-                            :label="room.roomName"
-                            :value="i">
+                                    v-for="(room,i) in hotel.roomList"
+                                    :key="i"
+                                    :label="room.roomName"
+                                    :value="i">
                             </el-option>
                         </el-select>
                     </div>
                     <div class="twoSideBlock">
                         <span class="select-font" >预估价格：</span>
-                        <span v-if="validPrice" 
-                            style="font-size:45px" :style="{color: this.Colors.element0}">
+                        <span v-if="validPrice"
+                              style="font-size:45px" :style="{color: this.Colors.element0}">
                             {{totalPrice}}
                         </span>
-                         <span style="font-size:35px">¥</span>                       
+                        <span style="font-size:35px">¥</span>
                     </div>
                     <div class="centerBlock">
-                        <el-button round type="primary" icon="el-icon-check" 
-                            v-bind:disabled="!validPrice"
-                            @click="dialogFormVisible = true">
+                        <el-button round type="primary" icon="el-icon-check"
+                                   v-bind:disabled="!validPrice"
+                                   @click="dialogFormVisible = true">
                             预定房间
                         </el-button>
                     </div>
@@ -84,30 +84,30 @@
                 <el-main>
                     <div class="mainPassage">
                         <span class="hotelTitle"
-                            :style="{color: this.Colors.plain}">
+                              :style="{color: this.Colors.plain}">
                             {{ hotel.hotelName }}
                         </span>
                         <el-divider></el-divider>
                         <span class="hotelIntro enableEnter"
-                            :style="{color: this.Colors.text}">
+                              :style="{color: this.Colors.text}">
                             {{ hotel.hotelIntro}}
                         </span>
                         <div style="display:flex;flex-direction:row-reverse;width:100%;margin:20px">
-                            <el-rate 
-                                margin=20px
-                                v-model="hotel.rate"
-                                disabled
-                                show-score
-                                text-color="#ff9900"
-                                score-template="{value}">
+                            <el-rate
+                                    margin=20px
+                                    v-model="hotel.rate"
+                                    disabled
+                                    show-score
+                                    text-color="#ff9900"
+                                    score-template="{value}">
                             </el-rate>
                         </div>
                     </div>
                     <el-divider></el-divider>
                     <div class="icon-list">
                         <div class="icon-list-item"  v-for="(data,i) in Bonus"
-                            :key="i"
-                            >
+                             :key="i"
+                        >
                             <div >
                                 <i v-bind:class="data.icon" :style="{color: tmpColor1}"></i>
                                 <span :style="{marginLeft:'25px',color: tmpColor2}">{{data.title}}</span>
@@ -115,14 +115,14 @@
                         </div>
                     </div>
                     <el-collapse v-model="activeNames" @change="handleChange" style="border-radius:30px">
-                        <div 
-                            v-for="(room,i) in hotel.roomList"
-                            :key="i">
+                        <div
+                                v-for="(room,i) in hotel.roomList"
+                                :key="i">
                             <el-card>
-                                <el-collapse-item    
-                                    :title="room.roomName" 
-                                    :name="i" 
-                                    class="room-item">
+                                <el-collapse-item
+                                        :title="room.roomName"
+                                        :name="i"
+                                        class="room-item">
                                     <template slot="title">
                                         <div class="twoSideBlock">
                                             <div>
@@ -143,7 +143,7 @@
                                                 class="room-Picture"
                                                 style="padding:0px;border-radius:5px"
                                                 :preview-src-list="[room.roomPic]"
-                                                >
+                                        >
                                         </el-image>
                                         <div class="room-Title-Block">
                                             <p style="white-space: pre-wrap" :style="{color: Colors.text}">{{room.roomIntro}}
@@ -160,23 +160,23 @@
         </el-container>
         <!-- Table -->
         <el-dialog title="住客信息" :visible.sync="dialogFormVisible" >
-            <el-form label-width=100px 
-                labelPosition="left"
-                v-for="i in people"
-                :key="i">
+            <el-form label-width=100px
+                     labelPosition="left"
+                     v-for="i in people"
+                     :key="i">
                 <el-card style="margin-bottom:5px">
-                <span style="margin-bottom:40px;margin-left:5px">客人{{i}}:</span>
-                <div style="margin:5px">
-                    <el-form-item label="客人姓名 ">
-                        <el-input v-model="dag.a"></el-input>
-                    </el-form-item>
-                    <el-form-item label="客人身份证">
-                        <el-input v-model="dag.b"></el-input>
-                    </el-form-item>
-                    <el-form-item label="备注信息 ">
-                        <el-input v-model="dag.c"></el-input>
-                    </el-form-item>
-                </div>
+                    <span style="margin-bottom:40px;margin-left:5px">客人{{i}}:</span>
+                    <div style="margin:5px">
+                        <el-form-item label="客人姓名 ">
+                            <el-input v-model="dag.a"></el-input>
+                        </el-form-item>
+                        <el-form-item label="客人身份证">
+                            <el-input v-model="dag.b"></el-input>
+                        </el-form-item>
+                        <el-form-item label="备注信息 ">
+                            <el-input v-model="dag.c"></el-input>
+                        </el-form-item>
+                    </div>
                 </el-card>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -189,10 +189,9 @@
 </template>
 
 <script>
-import axios from 'axios';
+    import axios from 'axios';
     export default {
         name: "Detail",
-
         data(){
             return{
                 dag:{
@@ -241,7 +240,6 @@ import axios from 'axios';
                 tmpColor2:'',
                 pColor:'',
                 Rooms:[
-
                 ],
                 choosedOption:0,
                 Bonus:[
@@ -263,7 +261,7 @@ import axios from 'axios';
                     }
                 ],
             }
-        },            
+        },
         methods:{
             submit(){
                 let data ={
@@ -277,45 +275,45 @@ import axios from 'axios';
                 }
                 axios.get(this.SERVER_PATH+'/reserve',{params:data})
                     .then(res=>{
-                            if(res.data.status === 200){
-                                this.$message.success('预定成功！');
-                            } else {
-                                this.$message.error('登录失效，请重新登录！');
-                                this.$router.push('/login')
-                            }
-                            this.dialogFormVisible = false
+                        if(res.data.status === 200){
+                            this.$message.success('预定成功！');
+                        } else {
+                            this.$message.error('登录失效，请重新登录！');
+                            this.$router.push('/login')
+                        }
+                        this.dialogFormVisible = false
                     }).catch(err=>{
-                        console.log(err);
-                        this.$message.error('服务器错误');
-                    })
+                    console.log(err);
+                    this.$message.error('服务器错误');
+                })
             },
             changeOption(){
                 this.maxPeople=this.hotel.roomList[this.choosedOption].roomCapacity;
                 if(this.maxPeople<this.people){
                     this.people=this.maxPeople;
                 }
-            },  
+            },
             handleChange(val){
                 console.log(val);
             },
-            getDetails(){  
+            getDetails(){
                 let data = {
                     hotelId :this.$route.params.uuid
                 }
                 console.log(data)
                 axios.get(this.SERVER_PATH+'/hotel',{params:data})
-                .then(res=>{
+                    .then(res=>{
                         if(res.data.status === 200) {
                             console.log(res.data);
                             this.hotel=res.data;
                         } else {
                             this.$message.error(res.data.msg)
                         }
-                })
-                .catch(err=>{
-                    console.log(err)
-                    this.$message.error('服务器错误！')
-                })
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                        this.$message.error('服务器错误！')
+                    })
             }
         },
         computed:{
@@ -339,10 +337,10 @@ import axios from 'axios';
     }
 </script>
 
-<style scoped>    
+<style scoped>
     #side-date{
         margin:40px;
-      
+
     }
     .centerBlock{
         margin:20px;
