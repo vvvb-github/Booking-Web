@@ -30,10 +30,10 @@
             <div class="edit-item">
                 <span class="edit-title">邮箱</span>
                 <span v-if="show.email" class="edit-content">{{this.$store.state.user.email}}</span>
-                <el-button v-if="show.email" class="edit-btn" type="text" icon="el-icon-edit" @click="show.email=false"></el-button>
-                <el-input v-if="!show.email" v-model="info.email" class="edit-input"></el-input>
-                <el-button v-if="!show.email" icon="el-icon-check" circle type="success" class="edit-btn" @click="submit(1)"></el-button>
-                <el-button v-if="!show.email" icon="el-icon-delete" circle type="danger" @click="show.email=true"></el-button>
+<!--                <el-button v-if="show.email" class="edit-btn" type="text" icon="el-icon-edit" @click="show.email=false"></el-button>-->
+<!--                <el-input v-if="!show.email" v-model="info.email" class="edit-input"></el-input>-->
+<!--                <el-button v-if="!show.email" icon="el-icon-check" circle type="success" class="edit-btn" @click="submit(1)"></el-button>-->
+<!--                <el-button v-if="!show.email" icon="el-icon-delete" circle type="danger" @click="show.email=true"></el-button>-->
             </div>
             <div class="edit-item">
                 <span class="edit-title">手机号</span>
